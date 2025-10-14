@@ -7,6 +7,14 @@
   --bg-color: #f9f9fb;
   --border-radius: 4px;
   --transition-speed: 0.3s;
+  
+  --sidebar-bg: #1f2937;
+  --sidebar-hover: #374151;
+  --sidebar-active: #2563eb;
+  --sidebar-text: #cbd5e1;
+  --logout-bg: #ef4444;
+  --logout-hover: #dc2626;
+
 }
 
 *, *::before, *::after {
