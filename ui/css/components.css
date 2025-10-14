@@ -1,0 +1,37 @@
+/* components.css */
+/* Reusable UI parts (buttons, tables) */
+
+.btn {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background: #2554c7;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table th, .table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+.table th {
+  background: #f4f6fa;
+  font-weight: 600;
+}
+.table tr:hover {
+  background: #f9f9fb;
+}

@@ -1,0 +1,79 @@
+/* custom.css */
+/* Overrides & page-specific tweaks */
+body {
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    color: #333;
+    background: url('../images/gs.png') no-repeat center center fixed;
+    background-size: cover;
+    padding-top: 0;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    color: #222;
+}
+a {
+    color: #2f6fed;
+}
+a:hover {
+    color: #f97316;
+}
+button {
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+button:hover {
+    background-color: #f97316;
+}
+/* Additional custom styles can be added here */
+/* Example: Custom card style */
+
+
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-5px);
+}
+.card-header {
+    background: #2f6fed;
+    color: white;
+    font-weight: 600;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+.card-body {
+    padding: 1.5rem;
+}   
+.card-footer {
+    background: #f4f6fa;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    text-align: right;
+}
+/* Form styles */
+.form-control {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s ease;
+}
+.form-control:focus {
+    border-color: #2f6fed;
+    box-shadow: 0 0 5px rgba(47, 111, 237, 0.5);
+    outline: none;
+}
+/* Table styles */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.table th, .table td {
+    padding: 1rem;
+
+ 
