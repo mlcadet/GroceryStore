@@ -3,44 +3,47 @@
 :root {
   --primary-color: #007bff;
   --accent-color: #0056b3;
+  --hover-primary: #0056b3;
+  --hover-accent: #004494;
 }
 
 /* 🔘 Base Button Style */
 .btn {
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  text-decoration: none;
+  display: inline-block;
+  padding: 12px 24px;
   font-size: 16px;
   font-weight: 600;
-  display: inline-block;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-/* 🎨 Button Variants */
+/* 🎨 Modifier Classes */
 .btn-primary {
   background-color: var(--primary-color);
 }
 .btn-primary:hover {
-  background-color: #0056b3;
+  background-color: var(--hover-primary);
+  transform: translateY(-2px);
 }
 
 .btn-accent {
   background-color: var(--accent-color);
 }
 .btn-accent:hover {
-  background-color: #004494;
+  background-color: var(--hover-accent);
+  transform: translateY(-2px);
 }
 
-/* ✨ Button States */
+/* ✨ States */
 .btn:focus {
   outline: 2px solid var(--accent-color);
   outline-offset: 2px;
 }
-
 .btn:disabled {
   background-color: #ccc;
   color: #666;
@@ -54,81 +57,5 @@
   justify-content: center;
   gap: 16px;
   flex-wrap: wrap;
-  margin-bottom: 20px;
-}
-/* 🎯 Button Design Enhancements */
-.action-button {
-  padding: 12px 24px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  background-color: #007bff;
-  border: none;
-  border-radius: 6px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  text-decoration: none;
-  margin-right: 10px;
-}
-
-.action-button:hover {
-  background-color: #0056b3;
-  transform: translateY(-2px);
-}
-
-
-/* 📊 Table Styles */
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.table th,
-.table td {
-  padding: 1rem;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-}
-
-.table th {
-  background: #f4f6fa;
-  font-weight: 600;
-}
-
-.table tr:hover {
-  background: #f9f9fb;
-}
-
-.table-wrapper {
-  overflow-x: auto;
-}
-
-/* 📐 Table Cell Utilities */
-.table td.align-right {
-  text-align: right;
-}
-
-.table td.align-center {
-  text-align: center;
-}
-
-.table td.no-wrap {
-  white-space: nowrap;
-}
-
-/* 🌓 Zebra Striping */
-.table tr:nth-child(even) {
-  background-color: #f8f8f8;
-}
-
-/* 📱 Responsive Table Font Scaling */
-@media (max-width: 600px) {
-  .table th,
-  .table td {
-    padding: 0.5rem;
-    font-size: 0.875rem;
-  }
+  margin: 20px 0;
 }

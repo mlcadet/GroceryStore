@@ -1,4 +1,5 @@
 const productPrices = {};
+const formData = $("#orderForm").serializeArray();
 
     // JSON data by api for order table
   $.get(productListApiUrl, function (response) {
@@ -11,7 +12,7 @@ const productPrices = {};
       $(".product-box").find("select").empty().html(options);
     }
   });
-  
+
     // Add new button click
   $("#addMoreButton").click(function () {
     const row = $(".product-box").first().clone();
@@ -39,39 +40,78 @@ const productPrices = {};
 
     // SAVE ORDER
     $("#saveOrder").on("click", function () {
-    const formData = $(form).serializeArray();
-    const requestPayload = {
-      customer_name: null,
-      total: null,
-      order_details: []
-    };
-    let currentItem = null;
+  const formData = $("#orderForm").serializeArray();
+  const requestPayload = {
+    customer_name: null,
+    total_cost: null,
+    order_details: []
+  };
+  let currentItem = null;
 
-    formData.forEach(element => {
-      switch (element.name) {
-        case 'customerName':
-          requestPayload.customer_name = element.value;
-          break;
-        case 'product_grand_total':
-          requestPayload.total = element.value;
-          break;
-        case 'product':
-          currentItem = { product_id: element.value };
-          requestPayload.order_details.push(currentItem);
-          break;
-        case 'qty':
-          if (currentItem) currentItem.quantity = element.value;
-          break;
-        case 'item_total':
-          if (currentItem) currentItem.total_price = element.value;
-          break;
-      }
-    });
+  formData.forEach(element => {
+    switch (element.name) {
+      case 'customerName':
+        requestPayload.customer_name = element.value;
+        break;
+      case 'product_grand_total':
+        requestPayload.total_cost = element.value;
+        break;
+      case 'product':
+        currentItem = { product_id: element.value };
+        requestPayload.order_details.push(currentItem);
+        break;
+      case 'qty':
+        if (currentItem) currentItem.quantity = element.value;
+        break;
+      case 'item_total':
+        if (currentItem) currentItem.total_price = element.value;
+        break;
+    }
+  });
 
-    callApi("POST", orderSaveApiUrl, {
-      data: JSON.stringify(requestPayload)
-    }, function(response) {
-      alert('Order saved successfully');
-    });
-}); 
+  callApi("POST", orderSaveApiUrl, {
+    data: JSON.stringify(requestPayload)
+  }, function(response) {
+    alert('Order saved successfully');
+  });
+});
+
+
+
+    // $("#saveOrder").on("click", function () {
+    // const formData = $(form).serializeArray();
+    // const requestPayload = {
+    //   customer_name: null,
+    //   total: null,
+    //   order_details: []
+    // };
+    // let currentItem = null;
+
+    // formData.forEach(element => {
+    //   switch (element.name) {
+    //     case 'customerName':
+    //       requestPayload.customer_name = element.value;
+    //       break;
+    //     case 'product_grand_total':
+    //       requestPayload.total = element.value;
+    //       break;
+    //     case 'product':
+    //       currentItem = { product_id: element.value };
+    //       requestPayload.order_details.push(currentItem);
+    //       break;
+    //     case 'qty':
+    //       if (currentItem) currentItem.quantity = element.value;
+    //       break;
+    //     case 'item_total':
+    //       if (currentItem) currentItem.total_price = element.value;
+    //       break;
+    //   }
+    // });
+
+//     callApi("POST", orderSaveApiUrl, {
+//       data: JSON.stringify(requestPayload)
+//     }, function(response) {
+//       alert('Order saved successfully');
+//     });
+// }); 
         
