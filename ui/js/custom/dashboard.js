@@ -25,24 +25,3 @@ $(function () {
     }
   });
 });
-
-
-
-
-// $(function () {
-//   // JSON data by API call for order table
-//   $.get(orderListApiUrl, function (response) {
-//     if (response) {
-//       let table = '';
-//       $.each(response, function (index, order) {
-//         table += `
-//           <tr>
-//             <td>${order.datetime}</td>
-//             <td>${order.customer_name}</td>
-//             <td>${order.total}</td>
-//           </tr>`;
-//       });
-//       $('#orderTable tbody').html(table);
-//     }
-//   });
-// });

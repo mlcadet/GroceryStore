@@ -1,6 +1,17 @@
 const productPrices = {};
 const formData = $("#orderForm").serializeArray();
 
+const productListApiUrl = "http://127.0.0.1:5000/api/products";
+
+  // API call function
+  document.getElementById("addProductBtn").addEventListener("click", function () {
+  document.getElementById("productModal").style.display = "flex";
+});
+
+function closeModal() {
+  document.getElementById("productModal").style.display = "none";
+}
+
     // JSON data by api for order table
   $.get(productListApiUrl, function (response) {
     if (response) {
@@ -68,6 +79,35 @@ const formData = $("#orderForm").serializeArray();
         break;
     }
   });
+
+  // SAVE NEW PRODUCT
+document.getElementById("productForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const name = document.getElementById("name").value.trim();
+  const uom = document.getElementById("uom").value.trim();
+  const price = parseFloat(document.getElementById("price").value);
+
+  if (!name || !uom || isNaN(price)) {
+    alert("Please fill in all fields correctly.");
+    return;
+  }
+
+  const newProduct = {
+    name: name,
+    uom_name: uom,
+    price: price
+  };
+
+  callApi("POST", productSaveApiUrl, JSON.stringify(newProduct), function (response) {
+    alert("Product added successfully!");
+    closeModal();
+    document.getElementById("productForm").reset();
+    // Optionally reload product list
+    location.reload(); // or re-fetch and re-render the table
+  });
+});
+
 
   callApi("POST", orderSaveApiUrl, {
     data: JSON.stringify(requestPayload)
