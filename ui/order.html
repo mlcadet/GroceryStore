@@ -9,11 +9,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,300,600,700">
     
-    <link rel="stylesheet" href="./css/bootstrap.min.css">
-    <link rel="stylesheet" href="./css/style.css?v=1.0">
-
-    <link media="all" type="text/css" rel="stylesheet" href="css/style.css?v=1.0">
-    <link media="all" type="text/css" rel="stylesheet" href="css/custom.css?v=1.3.3">
+    <!-- Local CSS: use available files in ui/css -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/custom.css?v=1.3.3">
 
     <title>Grocery Store Order</title>
 
@@ -146,119 +145,11 @@
             <button type="button" class="btn btn-success" id="saveOrder">Submit Order</button>
     </form>
 
-    <!--------- Add New Product Modal --------->
-<!-- Product Modal -->
-    <div id="productModal" class="modal">
-        <div class="modal-content">
-            <h2>Add New Product</h2>
-            <form id="productForm">
-                <input type="hidden" name="id" id="id" value="0">
-
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" placeholder="e.g. Spinach" required />
-
-                <label for="uom">Unit of Measurement:</label>
-                <input type="text" id="uom" name="uom" placeholder="e.g. kg" required />
-
-                <label for="price">Price per Unit:</label>
-                <input type="number" id="price" name="price" placeholder="e.g. 2.50" step="0.01" required />
-
-                <div class="modal-actions">
-                    <button type="button" class="btn cancel" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="btn save">Save</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <!-- Required JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="js/custom/order.js"></script>
+    <!-- Load shared/common utilities first, then page-specific scripts -->
     <script src="js/custom/common.js"></script>
+    <script src="js/custom/order.js"></script>
 </body>
 </html>
-
-
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grocery Store</title>
-</head>
-<body class="tooltips">
-    <div class ="container">
-        <div class="header content rows-content-header">
-            <button class="button-menu-mobile show-sidebar">  
-                <i class="fa fa-bars"></i>
-            </button>
-            <div class="navbar navbar-default" role="navigation">
-                <div class="container">
-                    <div class="navbar-collapse collapse">
-                        <ul class="nav navbar-nav visible-lg visible-md limi-chars">
-                            <ul class="breadcrumb">
-                                <a href="index.html">
-                                    <i class="zmdi zmdi-view-dashboard zmdi-hc-fw" title="Orders"></i>
-                                </a>
-                                <a href="manage_product.html">
-                                    <i class="zmdi zmdi-view-dashboard zmdi-hc-fw" title="Products"></i>
-                                </a>
-                            </ul>
-               </div>
-        </div>>
-    </div>
-
-<div class="right content-page">
-    <div class="body content rows scroll-y">
-        <div class="box-info full" id="taskFormContainer">
-            <h2> Manage Products</h2>
-            <div class="panel-body pt-0">
-                <div class="row mb-4">
-                    <div class="col-sm-12">
-                        <button type="button" class="btn-sm btn-primary pull-right" data-to  >
-                            Add New Product
-                        </button> 
-                    </div>
-                </div>
-                <table class="table table-bordered table-hover">
-                    <thead>
-                        <tr>
-                            <th>Product Name</th>
-                            <th>Unit of Measurement</th>
-                            <th>Price per Unit</th>
-                            <th style="width: 150px">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-    <div class="modal fade-scale" id="productModal" role="dialog" data-backdrop="static">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title"> Add New Product</h4>
-                </div>
-                <div class="modal-body">
-                    <form id="productForm"></form>
-                        <input type="hidden" name="id" id="id" value="0">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>Name:</label>
-                                    <input class="form-control" placeholder="Name" name="name" id="name" required>
-            </div>
-        </div>
-        <div class="col-md-12">
-            <div class="form-group">
-                <label>Unit of Measurement:</label>
-                <input class="form-control" placeholder="UOM" name="uom" id="uom" required>
-    </div>
-</body>
-</html> -->

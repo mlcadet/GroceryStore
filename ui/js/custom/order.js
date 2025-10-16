@@ -1,8 +1,6 @@
 const productPrices = {};
 const formData = $("#orderForm").serializeArray();
 
-const productListApiUrl = "http://127.0.0.1:5000/api/products";
-
   // API call function
   document.getElementById("addProductBtn").addEventListener("click", function () {
   document.getElementById("productModal").style.display = "flex";
@@ -115,43 +113,3 @@ document.getElementById("productForm").addEventListener("submit", function (e) {
     alert('Order saved successfully');
   });
 });
-
-
-
-    // $("#saveOrder").on("click", function () {
-    // const formData = $(form).serializeArray();
-    // const requestPayload = {
-    //   customer_name: null,
-    //   total: null,
-    //   order_details: []
-    // };
-    // let currentItem = null;
-
-    // formData.forEach(element => {
-    //   switch (element.name) {
-    //     case 'customerName':
-    //       requestPayload.customer_name = element.value;
-    //       break;
-    //     case 'product_grand_total':
-    //       requestPayload.total = element.value;
-    //       break;
-    //     case 'product':
-    //       currentItem = { product_id: element.value };
-    //       requestPayload.order_details.push(currentItem);
-    //       break;
-    //     case 'qty':
-    //       if (currentItem) currentItem.quantity = element.value;
-    //       break;
-    //     case 'item_total':
-    //       if (currentItem) currentItem.total_price = element.value;
-    //       break;
-    //   }
-    // });
-
-//     callApi("POST", orderSaveApiUrl, {
-//       data: JSON.stringify(requestPayload)
-//     }, function(response) {
-//       alert('Order saved successfully');
-//     });
-// }); 
-        

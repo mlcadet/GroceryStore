@@ -107,4 +107,3 @@ if __name__ == "__main__":
     print(dao.get_order_details(4))
 
     connection.close()
-

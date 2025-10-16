@@ -12,7 +12,25 @@ class UOMDAO:
                 for uom_id, uom_name in result
             ]
 
-# Optional test block
+    def insert_uom(self, uom):
+        """Insert a UOM. Expects a dict with key 'uom_name'. Returns new id."""
+        if not isinstance(uom, dict) or 'uom_name' not in uom:
+            raise ValueError("Missing 'uom_name' in uom data")
+        with self.connection.cursor() as cursor:
+            query = "INSERT INTO gs.uom (uom_name) VALUES (%s)"
+            cursor.execute(query, (uom['uom_name'],))
+            self.connection.commit()
+            return cursor.lastrowid
+
+    def delete_uom(self, uom_id):
+        """Delete a UOM by id. Returns number of rows deleted."""
+        with self.connection.cursor() as cursor:
+            query = "DELETE FROM gs.uom WHERE uom_id = %s"
+            cursor.execute(query, (uom_id,))
+            self.connection.commit()
+            return cursor.rowcount
+
+# # Optional test block
 if __name__ == "__main__":
     from sql_connection import get_sql_connection
 
@@ -21,53 +39,3 @@ if __name__ == "__main__":
     uoms = dao.get_all_uoms()
     print(uoms)
     connection.close()
-
-
-
-
-
-#--------------------------------
-# def get_uoms(connection):
-#     with connection.cursor() as cursor:
-#         query = "SELECT uom_id, uom_name FROM gs.uom"
-#         cursor.execute(query)
-#         result = cursor.fetchall()
-#         return [{
-#             "uom_id": uom_id, 
-#             "uom_name": uom_name} 
-#             for uom_id, uom_name in result]
-
-# if __name__ == "__main__":
-#     from sql_connection import get_sql_connection
-
-#     connection = get_sql_connection()
-#     uoms = get_uoms(connection)
-#     print(uoms)
-#     connection.close()
-
-
-
-
-# def get_uoms(connection):
-#     with connection.cursor() as cursor:
-#         query = "SELECT uom_id, uom_name FROM gs.uom"
-#         cursor.execute(query)
-#         result = cursor.fetchall()
-#         response = []
-#         for (uom_id, uom_name) in result:
-#             response.append({
-#                 "uom_id": uom_id,
-#                 "uom_name": uom_name
-#             })
-#         return response
-
-# if __name__ == "__main__":
-#     from sql_connection import get_sql_connection
-
-#     connection = get_sql_connection()
-#     uoms = get_uoms(connection)
-#     #print(get_all_products(connection))
-#     print(get_uoms(connection))
-
-
-

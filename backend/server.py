@@ -82,10 +82,31 @@ def delete_product_api(product_id):
 
 @app.route('/orders', methods=['POST'])
 def create_order():
+    """Create a new order.
+
+    Expected JSON structure (example):
+    {
+      "order_date": "2025-10-15",
+      "customer_id": 1,
+      "total_amount": 12.50,
+      "order_details": [ {"product_id": 2, "quantity": 3, "price_per_unit": 2.5}, ... ]
+    }
+
+    On success returns 201 with { "order_id": <id> }.
+    Returns 400 for invalid payload and 500 for server errors.
+    """
     data = request.get_json()
     print("Received order:", data)  # Debugging
-    # TODO: Save to database using OrdersDAO
-    return jsonify({"message": "Order received"}), 201
+    if not data or 'order_details' not in data:
+        return jsonify({"error": "Invalid order payload, missing 'order_details'"}), 400
+    try:
+        order_id = orders_dao.insert_order(data)
+        return jsonify({"message": "Order created", "order_id": order_id}), 201
+    except ValueError as ve:
+        return jsonify({"error": str(ve)}), 400
+    except Exception as e:
+        print('Error creating order:', e)
+        return jsonify({"error": "Internal server error"}), 500
 
 @app.route('/api/orders', methods=['POST'], endpoint='create_order_alias')
 def create_order_alias():
@@ -110,6 +131,41 @@ def get_orders_api():
 def get_uoms():
     uoms = uom_dao.get_all_uoms()
     return jsonify(uoms)
+
+@app.route('/api/uoms', methods=['POST'])
+def insert_uom():
+    """Insert a new unit-of-measure.
+
+    Expected JSON payload: { "uom_name": "kg" }
+    Returns 201 with { "uom_id": <id> } on success.
+    Returns 400 on invalid payload.
+    """
+    data = request.get_json()
+    try:
+        new_id = uom_dao.insert_uom(data)
+        return jsonify({"message": "UOM inserted", "uom_id": new_id}), 201
+    except ValueError as ve:
+        # Insert validation failed (missing required fields)
+        return jsonify({"error": str(ve)}), 400
+    except Exception as e:
+        print("Error inserting UOM:", e)
+        return jsonify({"error": "Internal server error"}), 500
+
+@app.route('/api/uoms/<int:uom_id>', methods=['DELETE'])
+def delete_uom(uom_id):
+    try:
+        deleted = uom_dao.delete_uom(uom_id)
+        if deleted:
+            return jsonify({"message": f"Deleted {deleted} UOM(s)."}), 200
+        else:
+            return jsonify({"message": "No UOM found with that ID."}), 404
+    except Exception as e:
+        print("Error deleting UOM:", e)
+        return jsonify({"error": "Internal server error"}), 500
+
+# UOM route docs (quick reference):
+# POST /api/uoms  -> JSON { "uom_name": "kg" }  -> 201 { "uom_id": <id> } or 400 on invalid
+# DELETE /api/uoms/<id> -> 200 on deleted, 404 if not found
 
 # ----------------------------------------
 # Server Entry Point

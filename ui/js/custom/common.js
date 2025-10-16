@@ -1,11 +1,14 @@
-// Api Definitions
-const orderSaveApiUrl = "http://localhost:5000/api/orders";
-const productListApiUrl = "http://localhost:5000/api/products";
-const uomListApiUrl = "http://localhost:5000/api/uoms";
-const orderListApiUrl = "http://localhost:5000/api/orders";
-const productSaveApiUrl = "http://localhost:5000/api/products";
-const productDeleteApiUrl = "http://localhost:5000/api/products";
-const productsApiUrl = "http://localhost:5000/api/products";
+// API base configuration (change this to switch environments)
+const API_BASE = (typeof window !== 'undefined' && window.API_BASE) ? window.API_BASE : 'http://localhost:5000';
+
+// Api Definitions (use API_BASE)
+const orderSaveApiUrl = `${API_BASE}/api/orders`;
+const orderListApiUrl = `${API_BASE}/api/orders`;
+const productListApiUrl = `${API_BASE}/api/products`;
+const productSaveApiUrl = `${API_BASE}/api/products`;
+const productDeleteApiUrl = `${API_BASE}/api/products`;
+const uomListApiUrl = `${API_BASE}/api/uoms`;
+const productsApiUrl = `${API_BASE}/api/products`;
 
 //🔄Common function to call API
 function callApi(method, url, data, onSuccess, onError) {

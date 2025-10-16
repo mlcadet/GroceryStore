@@ -61,5 +61,3 @@ if __name__ == "__main__":
     print(products)
     # print(dao.insert_product({"product_name": "cabbage", "uom_id": 1, "price_per_unit": "1.50"}))
     # print(dao.delete_product(11))
-
-
