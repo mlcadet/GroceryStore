@@ -12,11 +12,21 @@ const productsApiUrl = `${API_BASE}/api/products`;
 
 //🔄Common function to call API
 function callApi(method, url, data, onSuccess, onError) {
+  // If data is an object and not a string, stringify it for JSON POST/PUT/PATCH
+  var payload = data;
+  if (method !== 'GET' && typeof data === 'object') {
+    try {
+      payload = JSON.stringify(data);
+    } catch (e) {
+      payload = data;
+    }
+  }
+
   $.ajax({
     url: url,
     method: method,
     contentType: "application/json",
-    data: method !== 'GET' ? data : null,
+    data: method !== 'GET' ? payload : null,
     success: function (response) {
       if (onSuccess) onSuccess(response);
     },

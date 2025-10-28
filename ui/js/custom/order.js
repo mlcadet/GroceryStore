@@ -107,9 +107,8 @@ document.getElementById("productForm").addEventListener("submit", function (e) {
 });
 
 
-  callApi("POST", orderSaveApiUrl, {
-    data: JSON.stringify(requestPayload)
-  }, function(response) {
+  // send the request payload directly; callApi will stringify the object
+  callApi("POST", orderSaveApiUrl, requestPayload, function(response) {
     alert('Order saved successfully');
   });
 });

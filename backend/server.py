@@ -5,6 +5,8 @@ from products_dao import ProductsDAO
 from uom_dao import UOMDAO  # ✅ UOM support
 from orders_dao import OrdersDAO
 import os
+import json
+import traceback
 
 CWD = os.path.dirname(os.path.abspath(__file__))
 UI_DIR = os.path.normpath(os.path.join(CWD, '..', 'ui'))
@@ -96,17 +98,47 @@ def create_order():
     Returns 400 for invalid payload and 500 for server errors.
     """
     data = request.get_json()
+    # Accept wrapped payloads from older clients where the frontend sent
+    # { data: JSON.stringify(payload) } — unwrap that case transparently.
+    if data and isinstance(data, dict) and 'data' in data and isinstance(data['data'], str):
+        try:
+            data = json.loads(data['data'])
+        except Exception:
+            # leave data as-is; validation below will handle it
+            pass
+
     print("Received order:", data)  # Debugging
-    if not data or 'order_details' not in data:
+    # Basic normalization: accept different frontend key names
+    # Extract order_details (required)
+    order_details = data.get('order_details') or data.get('orderDetails')
+    if not order_details:
         return jsonify({"error": "Invalid order payload, missing 'order_details'"}), 400
+
+    # Extract customer info and totals, with fallbacks
+    order_date = data.get('order_date') or data.get('orderDate')
+    customer_id = data.get('customer_id') or data.get('customerId')
+    customer_name = data.get('customer_name') or data.get('customerName')
+    total_amount = data.get('total_amount') or data.get('total_cost') or data.get('product_grand_total')
+
+    # Build a normalized order object for the DAO
+    normalized_order = {
+        'order_date': order_date,
+        'customer_id': customer_id,
+        'customer_name': customer_name,
+        'total_amount': total_amount,
+        'order_details': order_details
+    }
+
     try:
-        order_id = orders_dao.insert_order(data)
+        order_id = orders_dao.insert_order(normalized_order)
         return jsonify({"message": "Order created", "order_id": order_id}), 201
     except ValueError as ve:
         return jsonify({"error": str(ve)}), 400
     except Exception as e:
         print('Error creating order:', e)
-        return jsonify({"error": "Internal server error"}), 500
+        traceback.print_exc()
+        # TEMP DEBUG: include exception message in response to aid local debugging
+        return jsonify({"error": "Internal server error", "detail": str(e)}), 500
 
 @app.route('/api/orders', methods=['POST'], endpoint='create_order_alias')
 def create_order_alias():
@@ -162,10 +194,6 @@ def delete_uom(uom_id):
     except Exception as e:
         print("Error deleting UOM:", e)
         return jsonify({"error": "Internal server error"}), 500
-
-# UOM route docs (quick reference):
-# POST /api/uoms  -> JSON { "uom_name": "kg" }  -> 201 { "uom_id": <id> } or 400 on invalid
-# DELETE /api/uoms/<id> -> 200 on deleted, 404 if not found
 
 # ----------------------------------------
 # Server Entry Point
