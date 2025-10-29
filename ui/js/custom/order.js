@@ -2,6 +2,8 @@
 const productListApiUrl = "/api/products";
 const productSaveApiUrl = "/api/products";
 const orderSaveApiUrl = "/api/orders";
+const uomListApiUrl = "/api/uoms";
+const uomOptions = {}; // ✅ optimal caching for UOMs
 
 $(function () {
   const productPrices = {};
@@ -27,15 +29,29 @@ $(function () {
     }
   });
 
+   // ✅ Fetch and populate UOM dropdown
+  $.get(uomListApiUrl, function (response) {
+    if (response) {
+      let options = '<option value="">Select UOM</option>';
+      $.each(response, function (index, uom) {
+        options += `<option value="${uom.uom_id}">${uom.uom_name}</option>`;
+        uomOptions[uom.uom_id] = uom.uom_name;
+      });
+      $("#uom").html(options); // for modal
+      $(".product-box").find(".cart-uom").html(options);
+    }
+  });
+
   // ✅ Add new product row
   $("#addMoreButton").click(function () {
-    const row = $(".product-box").first().clone();
-    row.find(".remove-row").removeClass("hideit");
-    row.find(".product-price").val("0.00");
-    row.find(".product-qty").val("1");
-    row.find(".product-total").val("0.00");
-    $(".product-container").append(row);
-  });
+  const row = $(".product-box").first().clone();
+  row.find(".remove-row").removeClass("hideit");
+  row.find(".product-price").val("0.00");
+  row.find(".product-qty").val("1");
+  row.find(".product-total").val("0.00");
+  row.find(".cart-uom").html($(".product-box").first().find(".cart-uom").html());
+  $(".product-container").append(row);
+});
 
   // ✅ Remove product row
   $(document).on("click", ".remove-row", function () {
@@ -93,8 +109,18 @@ $(function () {
         case 'item_total':
           if (currentItem) currentItem.total_price = element.value;
           break;
+        case 'uom':
+          if (currentItem) currentItem.uom_id = element.value;
+          break;
       }
     });
+
+      // ✅ Validation for Empty Product or UOM
+  const isValid = requestPayload.order_details.every(item => item.product_id && item.uom_id);
+  if (!isValid) {
+    alert("Please select both product and UOM for each item.");
+    return;
+  }
 
     // ✅ Send order to backend
     callApi('POST', orderSaveApiUrl, requestPayload, function (response) {
@@ -109,7 +135,7 @@ $(function () {
     e.preventDefault();
 
     const name = $('#name').val().trim();
-    const uom = $('#uom').val().trim();
+    const uom = $('#uom').val();
     const price = parseFloat($('#price').val());
 
     if (!name || !uom || isNaN(price)) {
@@ -120,6 +146,7 @@ $(function () {
     const newProduct = {
       name: name,
       uom_name: uom,
+      uom_id: uom,
       price: price
     };
 
