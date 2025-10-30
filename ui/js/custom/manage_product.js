@@ -1,3 +1,7 @@
+const productListApiUrl = "/api/products";
+const productSaveApiUrl = "/api/products";
+const productDeleteApiUrl = "/api/products";
+const uomListApiUrl = "/api/uoms";
 const productModal = $('#productModal');
 
 // Reusable API caller using fetch
@@ -50,6 +54,16 @@ function clearProductForm() {
 $(function () {
   // Load product list
   callApi("GET", productListApiUrl, null, renderProductTable);
+  // Load UOM Dropdown
+  callApi("GET", uomListApiUrl, null, function (response) {
+  if (response) {
+    let options = '<option value="">Select UOM</option>';
+    response.forEach(uom => {
+      options += `<option value="${uom.uom_name}">${uom.uom_name}</option>`;
+    });
+    $("#uom").html(options);
+  }
+});
 
   // Open modal for new product
   $("#addProduct").click(function () {
@@ -63,7 +77,7 @@ $(function () {
     const tr = $(this).closest('tr');
     $("#id").val(tr.data('id'));
     $("#name").val(tr.data('name'));
-    $("#unit").val(tr.data('unit'));
+    $("#uom").val(tr.data('unit'));
     $("#price").val(tr.data('price'));
     productModal.find('.modal-title').text('Edit Product');
     productModal.modal('show');
@@ -72,9 +86,9 @@ $(function () {
   // Save product
   $("#saveProduct").click(function () {
     const name = $("#name").val().trim();
-    const unit = $("#unit").val().trim();
+    const unit = $("#uom").val().trim();
     const price = $("#price").val().trim();
-
+        // Validation block
     if (!name || !unit || !price || isNaN(price)) {
       alert("Please fill out all fields correctly.");
       return;
