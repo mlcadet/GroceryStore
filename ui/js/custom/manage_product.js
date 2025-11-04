@@ -1,7 +1,3 @@
-const productListApiUrl = "/api/products";
-const productSaveApiUrl = "/api/products";
-const productDeleteApiUrl = "/api/products";
-const uomListApiUrl = "/api/uoms";
 const productModal = $('#productModal');
 
 // Reusable API caller using fetch

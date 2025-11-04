@@ -27,7 +27,7 @@ orders_dao = OrdersDAO(connection)
 @app.route('/')
 @app.route('/new-order')
 def serve_order_page():
-    # serve the order.html from the ui folder next to the project root
+    # serve the order.html from the ui folder next to the project roots
     return send_from_directory(UI_DIR, 'order.html')
 
 @app.route('/hello')
