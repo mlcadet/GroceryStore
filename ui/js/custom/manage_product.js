@@ -19,14 +19,15 @@ async function callApi(method, url, payload = null, onSuccess = null, onError = 
   }
 }
 
-// Render product table
+  // Render product table
 function renderProductTable(products) {
   let table = '';
   products.forEach(product => {
     table += `
       <tr data-id="${product.product_id || ''}" 
           data-name="${product.name || ''}" 
-          data-unit="${product.uom_name || ''}" 
+          data-unit="${product.uom_id || ''}" 
+          data-unit-name="${product.uom_name || ''}"
           data-price="${product.price_per_unit || 0}">
         <td>${product.name || ''}</td>
         <td>${product.uom_name || ''}</td>
@@ -52,14 +53,14 @@ $(function () {
   callApi("GET", productListApiUrl, null, renderProductTable);
   // Load UOM Dropdown
   callApi("GET", uomListApiUrl, null, function (response) {
-  if (response) {
-    let options = '<option value="">Select UOM</option>';
-    response.forEach(uom => {
-      options += `<option value="${uom.uom_name}">${uom.uom_name}</option>`;
-    });
-    $("#uom").html(options);
-  }
-});
+    if (response) {
+      let options = '<option value="">Select UOM</option>';
+      response.forEach(uom => {
+        options += `<option value="${uom.uom_id}">${uom.uom_name}</option>`;
+      });
+      $("#uom").html(options);
+    }
+  });
 
   // Open modal for new product
   $("#addProductBtn").click(function () {
@@ -73,7 +74,7 @@ $(function () {
     const tr = $(this).closest('tr');
     $("#id").val(tr.data('id'));
     $("#name").val(tr.data('name'));
-    $("#uom").val(tr.data('unit'));
+    $("#uom").val(tr.data('unit')); // This is now the UOM ID
     $("#price").val(tr.data('price'));
     productModal.find('.modal-title').text('Edit Product');
     productModal.modal('show');
@@ -93,19 +94,12 @@ $(function () {
       return;
     }
 
-    // Get UOM ID for the selected UOM name
-    callApi("GET", uomListApiUrl, null, function(uoms) {
-      const uom = uoms.find(u => u.uom_name === unit);
-      if (!uom) {
-        alert("Invalid UOM selected");
-        return;
-      }
-
-      const requestPayload = {
-        product_name: name,
-        uom_id: uom.uom_id,
-        price_per_unit: parseFloat(price)
-      };
+    // UOM ID is already selected from the dropdown
+    const requestPayload = {
+      product_name: name,
+      uom_id: parseInt(unit), // unit is now the UOM ID
+      price_per_unit: parseFloat(price)
+    };
 
       callApi(
         "POST",
@@ -122,7 +116,6 @@ $(function () {
         }
       );
     });
-  });
 
   // Delete product
   $(document).on("click", ".delete-product", function () {

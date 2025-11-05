@@ -30,6 +30,10 @@ def serve_order_page():
     # serve the order.html from the ui folder next to the project roots
     return send_from_directory(UI_DIR, 'order.html')
 
+@app.route('/manage-products')
+def serve_manage_products():
+    return send_from_directory(UI_DIR, 'manage_product.html')
+
 @app.route('/hello')
 def hello():
     return "Hello, World!"
@@ -46,8 +50,14 @@ def get_products():
 @app.route('/products', methods=['POST'])
 def insert_product():
     data = request.get_json()
+    # Normalize the product data to match expected format
+    normalized_data = {
+        'product_name': data.get('product_name') or data.get('name'),
+        'uom_id': int(data.get('uom_id')),  # Frontend sends UOM ID directly now
+        'price_per_unit': float(data.get('price_per_unit') or data.get('price'))
+    }
     try:
-        new_id = dao.insert_product(data)
+        new_id = dao.insert_product(normalized_data)
         return jsonify({"message": "Product inserted", "product_id": new_id}), 201
     except ValueError as ve:
         return jsonify({"error": str(ve)}), 400

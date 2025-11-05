@@ -1,5 +1,7 @@
 // API base configuration (change this to switch environments)
-const API_BASE = (typeof window !== 'undefined' && window.API_BASE) ? window.API_BASE : 'http://localhost:5000';
+// Use a relative base by default to avoid CORS between 127.0.0.1 and localhost
+// If you need to point to a remote server set window.API_BASE before loading this file.
+const API_BASE = (typeof window !== 'undefined' && window.API_BASE) ? window.API_BASE : '';
 
 // Api Definitions (use API_BASE)
 const orderSaveApiUrl = `${API_BASE}/api/orders`;

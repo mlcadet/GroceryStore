@@ -1,4 +1,6 @@
 from sql_connection import get_sql_connection
+import mysql.connector
+from mysql.connector import errors as mysql_errors
 
 
 class ProductsDAO:
@@ -8,9 +10,10 @@ class ProductsDAO:
 
     # Fetch all products
     def get_all_products(self):
+        # Acquire a fresh connection for this method and retry once on lost-connection
         conn = get_sql_connection()
-        with conn.cursor() as cursor:
-            query = """
+        cursor = None
+        query = """
             SELECT 
               products.product_id, 
               products.name, 
@@ -20,8 +23,32 @@ class ProductsDAO:
             FROM gs.products
             INNER JOIN gs.uom ON products.uom_id = uom.uom_id;
             """
+
+        try:
+            cursor = conn.cursor()
             cursor.execute(query)
-            response = []
+        except mysql_errors.OperationalError as oe:
+            # Lost connection during query — attempt one reconnect and retry
+            try:
+                conn = get_sql_connection(retries=2)
+                if cursor:
+                    try:
+                        cursor.close()
+                    except Exception:
+                        pass
+                cursor = conn.cursor()
+                cursor.execute(query)
+            except Exception:
+                # Re-raise so caller gets a proper error (and server can return 500)
+                if cursor:
+                    try:
+                        cursor.close()
+                    except Exception:
+                        pass
+                raise
+
+        response = []
+        try:
             for (product_id, name, uom_id, price_per_unit, uom_name) in cursor:
                 print(f"Product ID: {product_id}, Name: {name}, UOM ID: {uom_id}, Price per Unit: {price_per_unit}, UOM Name: {uom_name}")
                 response.append({
@@ -31,7 +58,13 @@ class ProductsDAO:
                     "price_per_unit": price_per_unit,
                     "uom_name": uom_name
                 })
-            return response
+        finally:
+            if cursor:
+                try:
+                    cursor.close()
+                except Exception:
+                    pass
+        return response
 
     # Validate and insert a new product
     def insert_product(self, product):

@@ -1,9 +1,5 @@
-// ✅ Define API endpoints
-const productListApiUrl = "/api/products";
-const productSaveApiUrl = "/api/products";
-const orderSaveApiUrl = "/api/orders";
-const uomListApiUrl = "/api/uoms";
-const uomOptions = {}; // ✅ optimal caching for UOMs
+// Import API URLs from common.js
+const uomOptions = {}; // optimal caching for UOMs
 
 $(function () {
   const productPrices = {};
