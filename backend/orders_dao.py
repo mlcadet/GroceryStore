@@ -2,16 +2,19 @@
 from datetime import datetime
 from sql_connection import get_sql_connection
 
+
 class OrdersDAO:
-    def __init__(self, connection):
-        self.connection = connection
+    def __init__(self, connection=None):
+        # Avoid long-lived connection; use get_sql_connection() per method
+        self._initial_connection = connection
 
     def insert_order(self, order):
         # Basic validation
         if not order or 'order_details' not in order or not isinstance(order['order_details'], list):
             raise ValueError("Order must include 'order_details' list")
 
-        cursor = self.connection.cursor()
+        conn = get_sql_connection()
+        cursor = conn.cursor()
 
         # include customer_name because the DB requires it in some schemas
         order_query = """
@@ -52,12 +55,13 @@ class OrdersDAO:
             order_details_data.append((order_id, product_id, quantity, price_per_unit, total_price))
         if order_details_data:
             cursor.executemany(order_details_query, order_details_data)
-        self.connection.commit()
+        conn.commit()
         cursor.close()
         return order_id
 
     def get_order_details(self, order_id):
-        cursor = self.connection.cursor()
+        conn = get_sql_connection()
+        cursor = conn.cursor()
         query = """
             SELECT od.order_id, od.product_id, od.quantity, od.price_per_unit,
                    p.name AS product_name
@@ -79,7 +83,8 @@ class OrdersDAO:
         return records
 
     def get_all_orders(self):
-        cursor = self.connection.cursor()
+        conn = get_sql_connection()
+        cursor = conn.cursor()
         query = "SELECT order_id, order_date, customer_id, total_amount FROM gs.orders"
         cursor.execute(query)
         rows = cursor.fetchall()  # ← Fully consume the result set
@@ -97,7 +102,8 @@ class OrdersDAO:
         return response
 
     def update_order(self, order_id, order):
-        cursor = self.connection.cursor()
+        conn = get_sql_connection()
+        cursor = conn.cursor()
         query = """
             UPDATE gs.orders
             SET order_date = %s, customer_id = %s, total_amount = %s
@@ -109,18 +115,18 @@ class OrdersDAO:
             order['total_amount'],
             order_id
         ))
-        self.connection.commit()
+        conn.commit()
         cursor.close()
         return True
 
     def delete_order(self, order_id):
-        cursor = self.connection.cursor()
+        conn = get_sql_connection()
+        cursor = conn.cursor()
         cursor.execute("DELETE FROM gs.order_details WHERE order_id = %s", (order_id,))
         cursor.execute("DELETE FROM gs.orders WHERE order_id = %s", (order_id,))
-        self.connection.commit()
+        conn.commit()
         cursor.close()
         return True
-        return response
 
 if __name__ == "__main__":
     connection = get_sql_connection()

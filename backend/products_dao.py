@@ -1,12 +1,15 @@
 from sql_connection import get_sql_connection
 
-class ProductsDAO:
-    def __init__(self, connection):
-        self.connection = connection
 
-    #Fetch all products
+class ProductsDAO:
+    def __init__(self, connection=None):
+        # Do not rely on a long-lived connection; acquire per method
+        self._initial_connection = connection
+
+    # Fetch all products
     def get_all_products(self):
-        with self.connection.cursor() as cursor:
+        conn = get_sql_connection()
+        with conn.cursor() as cursor:
             query = """
             SELECT 
               products.product_id, 
@@ -30,27 +33,29 @@ class ProductsDAO:
                 })
             return response
 
-    #Validate and insert a new product
+    # Validate and insert a new product
     def insert_product(self, product):
         required_keys = ['product_name', 'uom_id', 'price_per_unit']
         if not all(key in product for key in required_keys):
             raise ValueError(f"Missing keys in product: {product}")
 
-        with self.connection.cursor() as cursor:
+        conn = get_sql_connection()
+        with conn.cursor() as cursor:
             query = ("INSERT INTO gs.products"
                      "(name, uom_id, price_per_unit) "
                      "VALUES (%s, %s, %s)")
             data = (product['product_name'], product['uom_id'], product['price_per_unit'])
             cursor.execute(query, data)
-            self.connection.commit()
+            conn.commit()
             return cursor.lastrowid
 
-    #Delete a product
+    # Delete a product
     def delete_product(self, product_id):
-        with self.connection.cursor() as cursor:
+        conn = get_sql_connection()
+        with conn.cursor() as cursor:
             query = "DELETE FROM gs.products WHERE product_id = %s"
             cursor.execute(query, (product_id,))
-            self.connection.commit()
+            conn.commit()
             return cursor.rowcount
 
 # Optional: test block

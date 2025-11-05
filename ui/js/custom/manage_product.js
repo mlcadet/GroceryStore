@@ -62,7 +62,7 @@ $(function () {
 });
 
   // Open modal for new product
-  $("#addProduct").click(function () {
+  $("#addProductBtn").click(function () {
     clearProductForm();
     productModal.find('.modal-title').text('Add Product');
     productModal.modal('show');
@@ -80,37 +80,48 @@ $(function () {
   });
 
   // Save product
-  $("#saveProduct").click(function () {
+  $("#productForm").submit(function(e) {
+    e.preventDefault(); // Prevent default form submission
+    
     const name = $("#name").val().trim();
     const unit = $("#uom").val().trim();
     const price = $("#price").val().trim();
-        // Validation block
+    
+    // Validation block
     if (!name || !unit || !price || isNaN(price)) {
       alert("Please fill out all fields correctly.");
       return;
     }
 
-    const data = $("#productForm").serializeArray();
-    const requestPayload = {};
-    data.forEach(field => {
-      requestPayload[field.name] = field.value;
-    });
-
-    const method = requestPayload.id ? "PUT" : "POST";
-
-    callApi(
-      method,
-      productSaveApiUrl,
-      requestPayload,
-      () => {
-        productModal.modal('hide');
-        alert("Product saved successfully.");
-        location.reload();
-      },
-      () => {
-        alert("Failed to save product.");
+    // Get UOM ID for the selected UOM name
+    callApi("GET", uomListApiUrl, null, function(uoms) {
+      const uom = uoms.find(u => u.uom_name === unit);
+      if (!uom) {
+        alert("Invalid UOM selected");
+        return;
       }
-    );
+
+      const requestPayload = {
+        product_name: name,
+        uom_id: uom.uom_id,
+        price_per_unit: parseFloat(price)
+      };
+
+      callApi(
+        "POST",
+        productSaveApiUrl,
+        requestPayload,
+        (response) => {
+          productModal.modal('hide');
+          alert("Product saved successfully.");
+          location.reload();
+        },
+        (error) => {
+          alert("Failed to save product. Please check all fields and try again.");
+          console.error("Save error:", error);
+        }
+      );
+    });
   });
 
   // Delete product
